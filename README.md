@@ -1,5 +1,8 @@
 # polling-connection
 
+[![downloads](https://img.shields.io/npm/dm/polling-connection?style=flat-square)](https://www.npmjs.com/package/polling-connection)
+[![npm](https://img.shields.io/npm/v/polling-connection?style=flat-square)](https://www.npmjs.com/package/polling-connection)
+
 🚧 WIP: Work in Progress 🚧
 
 Event-based polling module written in TS with time tracking and aborting support.
@@ -112,7 +115,7 @@ Example:
 ```ts
 const connection = polling<ResultType>({
   task: async ({ done, signal }) => {
-    const result = await someAsyncTask();
+    const result = await someAsyncTask({ signal });
     if (result === "ok") {
       done(result);
     }
