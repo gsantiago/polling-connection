@@ -1,7 +1,8 @@
 # polling-connection
 
-[![downloads](https://img.shields.io/npm/dm/polling-connection?style=flat-square)](https://www.npmjs.com/package/polling-connection)
-[![npm](https://img.shields.io/npm/v/polling-connection?style=flat-square)](https://www.npmjs.com/package/polling-connection)
+[![build](https://github.com/gsantiago/polling-connection/actions/workflows/node.js.yml/badge.svg)](https://github.com/gsantiago/polling-connection/actions/runs/3919363159)
+[![downloads](https://img.shields.io/npm/dm/polling-connection)](https://www.npmjs.com/package/polling-connection)
+[![npm](https://img.shields.io/npm/v/polling-connection)](https://www.npmjs.com/package/polling-connection)
 
 🚧 WIP: Work in Progress 🚧
 
