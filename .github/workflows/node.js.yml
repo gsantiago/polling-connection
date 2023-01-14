@@ -28,7 +28,7 @@ jobs:
         cache: 'npm'
     - name: Run install
       uses: borales/actions-yarn@v4
-        with:
-          cmd: install
+      with:
+        cmd: install
     - run: npm run build --if-present
     - run: npm test
