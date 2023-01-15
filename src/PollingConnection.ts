@@ -55,9 +55,11 @@ export class PollingConnection<Payload> extends EventEmitter<Payload> {
   }
 
   close() {
-    this.abortController.abort();
-    this.clearTimers();
-    this.emit("close", undefined);
+    if (this.isActive()) {
+      this.abortController.abort();
+      this.clearTimers();
+      this.emit("close", undefined);
+    }
   }
 
   destroy() {
