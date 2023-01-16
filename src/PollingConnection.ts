@@ -14,11 +14,10 @@ export interface PollingOptions<Payload> {
 }
 
 export class PollingConnection<Payload> extends EventEmitter<Payload> {
-  static defaults: Required<Omit<PollingOptions<void>, "task" | "onSuccess">> =
-    {
-      interval: 3000,
-      timeout: 30000,
-    };
+  static defaults: Required<Omit<PollingOptions<void>, "task">> = {
+    interval: 3000,
+    timeout: 30000,
+  };
 
   private options: Required<PollingOptions<Payload>>;
 
@@ -73,7 +72,7 @@ export class PollingConnection<Payload> extends EventEmitter<Payload> {
       this.status = "inactive";
       this.abortController.abort();
       this.clearTimers();
-      this.emit("close", undefined);
+      this.emit("close");
     }
   }
 
@@ -118,7 +117,7 @@ export class PollingConnection<Payload> extends EventEmitter<Payload> {
   }
 
   private handleTimeout() {
-    this.emit("timeout", undefined);
+    this.emit("timeout");
     this.close();
   }
 
