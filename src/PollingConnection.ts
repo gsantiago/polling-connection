@@ -14,10 +14,11 @@ export interface PollingOptions<Payload> {
 }
 
 export class PollingConnection<Payload> extends EventEmitter<Payload> {
-  static defaults: Required<Omit<PollingOptions<void>, "task">> = {
-    interval: 3000,
-    timeout: 30000,
-  };
+  static defaults: Required<Omit<PollingOptions<void>, "task" | "onSuccess">> =
+    {
+      interval: 3000,
+      timeout: 30000,
+    };
 
   private options: Required<PollingOptions<Payload>>;
 
