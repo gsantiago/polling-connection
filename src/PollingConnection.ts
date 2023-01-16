@@ -1,4 +1,6 @@
-import { EventEmitter } from "./EventEmitter";
+import { EventEmitter, TrackingTime } from "./EventEmitter";
+
+type PollingStatus = "inactive" | "active";
 
 export interface TaskOptions<Payload> {
   done: (data: Payload) => void;
@@ -19,11 +21,14 @@ export class PollingConnection<Payload> extends EventEmitter<Payload> {
 
   private options: Required<PollingOptions<Payload>>;
 
+  private status: PollingStatus = "inactive";
+
   private intervalTimerId: NodeJS.Timer;
   private timeoutTimerId: NodeJS.Timer;
   private trackingTimerId: NodeJS.Timer;
 
-  private passedSeconds: number;
+  private trackingTime: TrackingTime;
+
   private timeoutInSeconds: number;
 
   private abortController: AbortController;
@@ -37,16 +42,24 @@ export class PollingConnection<Payload> extends EventEmitter<Payload> {
     };
 
     this.timeoutInSeconds = this.options.timeout / 1000;
+
+    this.trackingTime = {
+      passed: 0,
+      remaining: this.timeoutInSeconds,
+    };
   }
 
   start() {
-    this.abortController = new AbortController();
-    this.passedSeconds = 0;
+    this.status = "active";
 
-    this.emit("start", {
-      passed: this.passedSeconds,
+    this.abortController = new AbortController();
+
+    this.trackingTime = {
+      passed: 0,
       remaining: this.timeoutInSeconds,
-    });
+    };
+
+    this.emit("start", this.trackingTime);
 
     this.startTimeoutTimer();
     this.trackTimer();
@@ -56,6 +69,7 @@ export class PollingConnection<Payload> extends EventEmitter<Payload> {
 
   close() {
     if (this.isActive()) {
+      this.status = "inactive";
       this.abortController.abort();
       this.clearTimers();
       this.emit("close", undefined);
@@ -67,12 +81,12 @@ export class PollingConnection<Payload> extends EventEmitter<Payload> {
     this.removeAllEventListeners();
   }
 
-  private isAborted() {
-    return this.abortController.signal.aborted;
+  private isInactive() {
+    return this.status === "inactive";
   }
 
   private isActive() {
-    return !this.isAborted();
+    return this.status === "active";
   }
 
   private startTimeoutTimer() {
@@ -84,17 +98,22 @@ export class PollingConnection<Payload> extends EventEmitter<Payload> {
 
   private trackTimer() {
     this.trackingTimerId = setTimeout(() => {
-      this.passedSeconds += 1;
+      const passedSeconds = this.trackingTime.passed + 1;
 
-      if (this.isActive() && this.passedSeconds <= this.timeoutInSeconds) {
-        this.emit("second", {
-          passed: this.passedSeconds,
-          remaining: this.timeoutInSeconds - this.passedSeconds,
-        });
-
+      if (this.isActive()) {
+        this.updateTrackingTime(passedSeconds);
         this.trackTimer();
       }
     }, 1000);
+  }
+
+  private updateTrackingTime(passedSeconds: number) {
+    this.trackingTime = {
+      passed: passedSeconds,
+      remaining: this.timeoutInSeconds - passedSeconds,
+    };
+
+    this.emit("second", this.trackingTime);
   }
 
   private handleTimeout() {
@@ -109,7 +128,7 @@ export class PollingConnection<Payload> extends EventEmitter<Payload> {
   }
 
   private async executeTask() {
-    if (this.isAborted()) {
+    if (this.isInactive()) {
       return;
     }
 
