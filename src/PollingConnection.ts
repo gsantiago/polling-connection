@@ -1,7 +1,5 @@
 import { EventEmitter, TrackingTime } from "./EventEmitter";
 
-type PollingStatus = "inactive" | "active";
-
 export interface TaskOptions<Payload> {
   done: (data: Payload) => void;
   signal: AbortSignal;
@@ -21,7 +19,7 @@ export class PollingConnection<Payload> extends EventEmitter<Payload> {
 
   private options: Required<PollingOptions<Payload>>;
 
-  private status: PollingStatus = "inactive";
+  private isConnectionActive = false;
 
   private delayTimerId: NodeJS.Timer;
   private timeoutTimerId: NodeJS.Timer;
@@ -50,7 +48,7 @@ export class PollingConnection<Payload> extends EventEmitter<Payload> {
   }
 
   start() {
-    this.status = "active";
+    this.isConnectionActive = true;
 
     this.abortController = new AbortController();
 
@@ -69,7 +67,7 @@ export class PollingConnection<Payload> extends EventEmitter<Payload> {
 
   close() {
     if (this.isActive()) {
-      this.status = "inactive";
+      this.isConnectionActive = false;
       this.abortController.abort();
       this.clearTimers();
       this.emit("close");
@@ -82,11 +80,11 @@ export class PollingConnection<Payload> extends EventEmitter<Payload> {
   }
 
   private isInactive() {
-    return this.status === "inactive";
+    return !this.isConnectionActive;
   }
 
   private isActive() {
-    return this.status === "active";
+    return this.isConnectionActive;
   }
 
   private startTimeoutTimer() {
