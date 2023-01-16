@@ -188,3 +188,21 @@ test("abort signal", (done) => {
   connection.start();
   connection.close();
 });
+
+test("unsubscribe listener", (done) => {
+  const connection = setup();
+
+  expect.assertions(1);
+
+  connection.on("close", () => {
+    expect(spies.start).not.toHaveBeenCalled();
+    done();
+  });
+
+  const unsubscribe = connection.on("start", spies.start);
+
+  unsubscribe();
+
+  connection.start();
+  connection.close();
+});

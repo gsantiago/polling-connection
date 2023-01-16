@@ -12,30 +12,33 @@ type Events<Payload> = {
   close: () => void;
 };
 
-type Listeners<Payload> = {
-  [K in keyof Events<Payload>]?: Events<Payload>[K][];
-};
+type Receivers<Payload, K extends keyof Events<Payload>> = {
+  event: K;
+  listener: Events<Payload>[K];
+}[];
 
 export abstract class EventEmitter<Payload> {
-  private listeners: Listeners<Payload> = {};
+  private receivers: Receivers<Payload, keyof Events<Payload>> = [];
 
   on<K extends keyof Events<Payload>>(event: K, listener: Events<Payload>[K]) {
-    if (!this.listeners[event]) {
-      this.listeners[event] = [];
-    }
+    this.receivers.push({ event, listener });
 
-    this.listeners[event]!.push(listener);
+    return () => {
+      this.receivers = this.receivers.filter(
+        (receiver) => receiver.listener !== listener
+      );
+    };
   }
 
   protected emit<K extends keyof Events<Payload>>(
     event: K,
     ...args: Parameters<Events<Payload>[K]>
   ) {
-    const listeners = this.listeners[event] ?? [];
-    listeners.forEach((fn) => fn.apply(this, args));
+    const listeners = this.receivers.filter((r) => r.event === event);
+    listeners.forEach(({ listener }) => listener.apply(this, args));
   }
 
   removeAllEventListeners() {
-    this.listeners = {};
+    this.receivers = [];
   }
 }

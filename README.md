@@ -138,7 +138,7 @@ Example:
 connection.start();
 ```
 
-#### `on(event: PollingEvent, data) => void`
+#### `on(event: PollingEvent, data) => Unsubscribe`
 
 Adds a new event listener.
 
@@ -187,6 +187,16 @@ connection.on("timeout", () => {
 console.log("close", () => {
   console.log("the polling is closed");
 });
+```
+
+This method also return the unsubscribe function:
+
+```ts
+const unsubscribe = connection("success", handleSuccess);
+
+// ...
+
+unsubscribe(); // remove the success listener
 ```
 
 #### `close() => void`
