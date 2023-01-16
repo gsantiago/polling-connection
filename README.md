@@ -42,7 +42,7 @@ const connection = polling({
     }
   },
   timeout: 30000,
-  interval: 3000,
+  delay: 3000,
 });
 ```
 
@@ -105,11 +105,11 @@ Creates a new polling connection.
 
 Available options:
 
-| Option   | Description                                                          | Default            |
-| -------- | -------------------------------------------------------------------- | ------------------ |
-| task     | An async function that will be executed while the connection is open | Required           |
-| interval | Interval in milliseconds between the polling calls                   | 3000 (3 seconds)   |
-| timeout  | Time in milliseconds for timeout                                     | 30000 (30 seconds) |
+| Option  | Description                                                          | Default            |
+| ------- | -------------------------------------------------------------------- | ------------------ |
+| task    | An async function that will be executed while the connection is open | Required           |
+| delay   | Delay in milliseconds after each call                                | 3000 (3 seconds)   |
+| timeout | Time in milliseconds for timeout                                     | 30000 (30 seconds) |
 
 Example:
 

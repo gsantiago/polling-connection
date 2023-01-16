@@ -92,7 +92,7 @@ test("success event", (done) => {
 test("second event", (done) => {
   mockedFetchStatus.mockResolvedValue("inactive");
 
-  const connection = setup({ timeout: 5000, interval: 1000 });
+  const connection = setup({ timeout: 5000, delay: 1000 });
 
   connection.on("close", done);
 

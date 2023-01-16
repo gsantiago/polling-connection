@@ -9,13 +9,13 @@ export interface TaskOptions<Payload> {
 
 export interface PollingOptions<Payload> {
   task: (options: TaskOptions<Payload>) => void;
-  interval?: number;
+  delay?: number;
   timeout?: number;
 }
 
 export class PollingConnection<Payload> extends EventEmitter<Payload> {
   static defaults: Required<Omit<PollingOptions<void>, "task">> = {
-    interval: 3000,
+    delay: 3000,
     timeout: 30000,
   };
 
@@ -23,7 +23,7 @@ export class PollingConnection<Payload> extends EventEmitter<Payload> {
 
   private status: PollingStatus = "inactive";
 
-  private intervalTimerId: NodeJS.Timer;
+  private delayTimerId: NodeJS.Timer;
   private timeoutTimerId: NodeJS.Timer;
   private trackingTimerId: NodeJS.Timer;
 
@@ -123,7 +123,7 @@ export class PollingConnection<Payload> extends EventEmitter<Payload> {
 
   private clearTimers() {
     clearInterval(this.timeoutTimerId);
-    clearTimeout(this.intervalTimerId);
+    clearTimeout(this.delayTimerId);
     clearTimeout(this.trackingTimerId);
   }
 
@@ -142,9 +142,9 @@ export class PollingConnection<Payload> extends EventEmitter<Payload> {
     }
 
     if (this.isActive()) {
-      this.intervalTimerId = setTimeout(() => {
+      this.delayTimerId = setTimeout(() => {
         this.executeTask();
-      }, this.options.interval);
+      }, this.options.delay);
     }
   }
 
