@@ -4,8 +4,6 @@
 [![downloads](https://img.shields.io/npm/dm/polling-connection)](https://www.npmjs.com/package/polling-connection)
 [![npm](https://img.shields.io/npm/v/polling-connection)](https://www.npmjs.com/package/polling-connection)
 
-🚧 WIP: Work in Progress 🚧
-
 Event-based polling module written in TS with time tracking and aborting support.
 
 :white_check_mark: Agnostic (works with axios, fetch or any async function) <br />
