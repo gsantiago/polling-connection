@@ -1,6 +1,6 @@
 {
   "name": "polling-connection",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Event-based polling module written in TS with time tracking and aborting support.",
   "files": [
     "dist"

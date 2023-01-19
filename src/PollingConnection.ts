@@ -1,4 +1,5 @@
-import { EventEmitter, TrackingTime } from "./EventEmitter";
+import { EventEmitter } from "./EventEmitter";
+import { TrackingTime } from "./EventMap";
 
 export interface TaskOptions<Payload> {
   done: (data: Payload) => void;
